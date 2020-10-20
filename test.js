@@ -1,5 +1,6 @@
-let { some, nothing, maybe } = require('./maybe');
+let { some, nothing, maybe, isSome } = require('./maybe');
 let { right, left, isRight } = require('./either');
+const {mappend} = require('./mappend');
 
 const add = a => b => a + b;
 const mul = a => b => a * b;
@@ -42,4 +43,11 @@ const always = x => () => x;
 
 const ifElse = iftrue => iffalse => a => a ? iftrue() : iffalse();
 
-console.log(equals(nothing()) (nothing()));
+const print = (x) => console.log(x.toString());
+
+let _1 = right([1, 2]);
+let _2 = right([3, 4]);
+
+let result = mappend(_1)(_2);
+
+print (result);

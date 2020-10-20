@@ -1,3 +1,5 @@
+let { mappend } = require('./mappend');
+
 function Maybe (_isNothing, _value) {
 
   //fmap :: Functor f => f a ~> (a -> b) -> f b
@@ -16,6 +18,7 @@ function Maybe (_isNothing, _value) {
     return _isNothing ? nothing() : func(_value);
   }
 
+  //equals :: Setoid f => f a ~> f b -> Boolean
   const _equals = this['@@equals@@'] = function(f) {
     if(_isSome && isSome(f)){
       return _value === value(f);
@@ -26,12 +29,22 @@ function Maybe (_isNothing, _value) {
     }
   }
 
+  const _mappend = this['@@mappend@@'] = function(f) {
+    if (_isSome) {
+      if(isSome(f)) { return some(mappend(_value)(value(f))); }
+      else { return some(_value); }
+    } else {
+      if (isSome(f)) { return some(value(f)); }
+      else { return nothing(); }
+    }
+  }
+
   this['@@isNothing@@'] = _isNothing;
   this['@@value@@'] = _value;
   const _isSome = this['@@isSome@@'] = !_isNothing;
 
   this.toString = function() {
-    return isNothing ? 'Nothing' : `Some (${_value})`;
+    return _isNothing ? 'Nothing' : `Some (${_value})`;
   }
 }
 
@@ -53,4 +66,5 @@ module.exports = {
   some,
   nothing,
   maybe,
+  isSome,
 }

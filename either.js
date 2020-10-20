@@ -1,3 +1,5 @@
+let { mappend } = require('./mappend');
+
 function Either (_isLeft, lval, rval) {
   
   const _fmap = this['@@fmap@@'] = function(f) {
@@ -20,6 +22,16 @@ function Either (_isLeft, lval, rval) {
       return rval === _rval(f);
     } else {
       return false;
+    }
+  }
+
+  const _mappend = this['@@mappend@@'] = function (f) {
+    if (_isLeft) {
+      if (isLeft(f)) { return left(mappend(lval)(_lval(f))); }
+      else { return right(_rval(f)); }
+    } else {
+      if (isRight(f)) { return right(mappend(rval)(_rval(f))); }
+      else { return right(rval); }
     }
   }
 
