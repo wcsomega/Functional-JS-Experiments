@@ -1,4 +1,4 @@
-let { mappend } = require('./mappend');
+const { mappend } = require('./mappend');
 
 function Either (_isLeft, lval, rval) {
   

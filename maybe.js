@@ -1,4 +1,6 @@
-let { mappend } = require('./mappend');
+const { mappend } = require('./mappend');
+const { isEmpty } = require('./empty');
+const { isPure } = require('./pure');
 
 function Maybe (_isNothing, _value) {
 
@@ -30,6 +32,9 @@ function Maybe (_isNothing, _value) {
   }
 
   const _mappend = this['@@mappend@@'] = function(f) {
+    // let _f = fromEmpty(f);
+    // _f = fromPure(_f);
+
     if (_isSome) {
       if(isSome(f)) { return some(mappend(_value)(value(f))); }
       else { return some(_value); }
@@ -38,6 +43,9 @@ function Maybe (_isNothing, _value) {
       else { return nothing(); }
     }
   }
+
+  const _fromPure = this['@@fromPure@@'] = some;
+  const _fromEmpty = this['@@fromEmpty@@'] = nothing;
 
   this['@@isNothing@@'] = _isNothing;
   this['@@value@@'] = _value;
@@ -54,17 +62,20 @@ function isNothing (a) { return a['@@isNothing@@'] }
 function isSome (a) { return a['@@isSome@@'] }
 function value (a) { return a['@@value@@'] }
 
+const fromEmpty = f =>  isEmpty(f) ? nothing() : f;
+const fromPure = f => isPure(f) ? some(f.contents) : f;
+
 const maybe = (ifSome) => (ifNothing) => (m) => {
   if (m['@@isNothing@@']()) {
     return ifNothing();
   } else {
     return ifSome(m['@@value@@']());
   }
-}
+};
 
 module.exports = {
   some,
   nothing,
   maybe,
   isSome,
-}
+};

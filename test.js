@@ -1,6 +1,8 @@
-let { some, nothing, maybe, isSome } = require('./maybe');
-let { right, left, isRight } = require('./either');
-const {mappend} = require('./mappend');
+const { some, nothing, maybe, isSome } = require('./maybe');
+const { right, left, isRight } = require('./either');
+const { mappend } = require('./mappend');
+const { empty } = require('./empty');
+const { pure } = require('./pure');
 
 const add = a => b => a + b;
 const mul = a => b => a * b;
@@ -43,11 +45,18 @@ const always = x => () => x;
 
 const ifElse = iftrue => iffalse => a => a ? iftrue() : iffalse();
 
-const print = (x) => console.log(x.toString());
+const print = x => console.log(x.toString());
 
-let _1 = right([1, 2]);
-let _2 = right([3, 4]);
+const foldr = func => init => arr => arr.reduceRight((a, v) => func(v)(a), init);
 
-let result = mappend(_1)(_2);
 
-print (result);
+// mconcat(['a', 'b', 'c']) = 'abc'
+const mconcat = foldr(mappend)(empty());
+
+let result = mconcat([
+  some([1]),
+  some([2]),
+  some([3]),
+])
+
+print(result);
