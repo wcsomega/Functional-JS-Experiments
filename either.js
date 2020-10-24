@@ -1,30 +1,24 @@
 const { mappend } = require('./mappend');
 
 function Either (_isLeft, lval, rval) {
-  
+
+  //instance Functor
   const _fmap = this['@@fmap@@'] = function(f) {
     return _isLeft ? left(lval) : right(f(rval))
   }
 
+  //instance Applicative
   const _ap = this['@@ap@@'] = function(f) {
     return isLeft(f) ? left(_lval(f)) : _fmap(_rval(f));
   }
-
+  const _fromPure = this['@@fromPure@@'] = right;
+  
+  //instance Monad
   const _chain = this['@@chain@@'] = function(f) {
     return _isLeft ? left(lval) : f(rval);
   }
 
-  //only applies === operator to wrapped values
-  const _equals = this['@@equals@@'] = function(f) {
-    if (_isLeft && isLeft(f)) {
-      return lval === _lval(f);
-    } else if (_isRight && isRight(f)){
-      return rval === _rval(f);
-    } else {
-      return false;
-    }
-  }
-
+  //instance Semigroup
   const _mappend = this['@@mappend@@'] = function (f) {
     if (_isLeft) {
       if (isLeft(f)) { return left(mappend(lval)(_lval(f))); }
