@@ -1,40 +1,29 @@
 const { mappend } = require('./mappend');
 const { isEmpty } = require('./empty');
 const { isPure } = require('./pure');
+const { eq, lte } = require('./equals');
 
 function Maybe (_isNothing, _value) {
 
-  //fmap :: Functor f => f a ~> (a -> b) -> f b
+  //instance Functor
   const _fmap = this['@@fmap@@'] = function(func) {
     return _isNothing ? nothing() : some(func(_value));
   }
 
-  //ap :: Apply f => f a ~> f (a -> b) -> f b
+  //instance Applicative
   const _ap = this['@@ap@@'] = function (func) {
     // console.log(value);
     return func['@@isNothing@@'] ? nothing() : _fmap(value(func));
   }
+  const _fromPure = this['@@fromPure@@'] = some;
 
-  //chain :: Chain f => f a ~> (a -> f b) => f b
+  //instance Monad
   const _chain = this['@@chain@@'] = function (func) {
     return _isNothing ? nothing() : func(_value);
   }
 
-  //equals :: Setoid f => f a ~> f b -> Boolean
-  const _equals = this['@@equals@@'] = function(f) {
-    if(_isSome && isSome(f)){
-      return _value === value(f);
-    } else if (_isNothing && isNothing(f)) {
-      return true;
-    }else {
-      return false;
-    }
-  }
-
+  //instance Semigroup
   const _mappend = this['@@mappend@@'] = function(f) {
-    // let _f = fromEmpty(f);
-    // _f = fromPure(_f);
-
     if (_isSome) {
       if(isSome(f)) { return some(mappend(_value)(value(f))); }
       else { return some(_value); }
@@ -44,12 +33,36 @@ function Maybe (_isNothing, _value) {
     }
   }
 
-  const _fromPure = this['@@fromPure@@'] = some;
+  //instance Eq
+  const _equals = this['@@equals@@'] = function (f) {
+    if (_isNothing && isNothing(f)) {
+      return true;
+    } else if (_isSome && isSome(f)) {
+      return eq(_value)(value(f));
+    } else {
+      return false;
+    }
+  }
+
+  //instance Ord
+  const _lte = this['@@lte@@'] = function (f) {
+    if (_isNothing && isNothing(f)) {
+      return true;
+    } else if (_isSome && isSome(f)) {
+      return lte(_value)(value(f));
+    } else if(_isSome) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  //instance Monoid
   const _fromEmpty = this['@@fromEmpty@@'] = nothing;
 
   this['@@isNothing@@'] = _isNothing;
-  this['@@value@@'] = _value;
   const _isSome = this['@@isSome@@'] = !_isNothing;
+  this['@@value@@'] = _value;
 
   this.toString = function() {
     return _isNothing ? 'Nothing' : `Some (${_value})`;
