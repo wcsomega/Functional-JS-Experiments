@@ -1,14 +1,12 @@
-const { array$mappend } = require('./array');
+const { tryWrapArray } = require('./array');
 const { tryCoerceEmptyOrPure } = require('./coerce');
 
 const mappend = a => b => {
   let [_a, _b] = tryCoerceEmptyOrPure(a, b);
+  _a = tryWrapArray(_a);
+  _b = tryWrapArray(_b);
 
-  if (a instanceof Array && b instanceof Array) {
-    return array$mappend(a)(b);
-  }
-
-  else if (typeof a == 'string' && typeof b == 'string') {
+  if (typeof a == 'string' && typeof b == 'string') {
     return a.concat(b);
   }
 
