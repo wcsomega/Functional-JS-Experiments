@@ -1,7 +1,7 @@
 const { mappend } = require('./mappend');
 const { isEmpty } = require('./empty');
 const { isPure } = require('./pure');
-const { eq, lte } = require('./equals');
+const { eq, lte } = require('./EqOrd');
 
 function Maybe (_isNothing, _value) {
 
