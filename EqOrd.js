@@ -1,4 +1,5 @@
-const { tryCoerceEmptyOrPure } = require("./coerce")
+const { tryCoerceEmptyOrPure } = require('./coerce')
+const { compose, complement } = require('./function');
 
 const eq = a => b => {
   let [_a, _b] = tryCoerceEmptyOrPure(a, b);
@@ -18,7 +19,11 @@ const lte = a => b => {
   }
 }
 
+const neq = compose([complement, eq]);
+const gt = compose([complement, lte]);
+const lt = a => b => lte(a)(b) && neq(a)(b);
+const gte = a => b => gt(a)(b) || eq(a)(b);
+
 module.exports = {
-  eq,
-  lte,
+  eq, neq, lt, gt, lte, gte
 }
