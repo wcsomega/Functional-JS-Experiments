@@ -1,5 +1,7 @@
 const { tryWrapArray } = require('./array');
 const { tryCoerceEmptyOrPure } = require('./coerce');
+const { empty } = require('./empty');
+const { foldr } = require('./array');
 
 const mappend = a => b => {
   let [_a, _b] = tryCoerceEmptyOrPure(a, b);
@@ -22,5 +24,6 @@ const mappend = a => b => {
     throw new Error("Tried to mappend 2 values that cannot be mappended");
   }
 }
+const mconcat = foldr(mappend)(empty());
 
-module.exports = { mappend }
+module.exports = { mappend, mconcat }
