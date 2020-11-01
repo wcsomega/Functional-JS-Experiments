@@ -46,7 +46,7 @@ function _lval(m) { return m['@@lval@@']; }
 
 const fromRight = def => e => isRight(e) ? _rval(e) : def;
 const fromLeft = def => e => isLeft(e) ? _lval(e) : def;
-const either = ifleft => ifright => e => ifLeft(e) ? ifleft(_lval(e)) : ifright(_rval(e));
+const either = ifleft => ifright => e => isLeft(e) ? ifleft(_lval(e)) : ifright(_rval(e));
 
 function left(value) {
   return new Either(true, value, null);
