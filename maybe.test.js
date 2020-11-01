@@ -11,6 +11,7 @@ test('some', () => {
   const fn2 = jest.fn();
   maybe(fn1)(fn2)(a);
   expect(fn1).toHaveBeenCalled();
+  expect(fn1).toHaveBeenCalledWith(1);
   expect(fn2).not.toHaveBeenCalled();
 })
 
