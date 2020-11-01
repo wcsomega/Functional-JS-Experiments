@@ -10,8 +10,8 @@ function __Array__ (__value__) {
   this['@@foldr@@'] = f => init => __value__.reduceRight((a, v) => f(v)(a), init);
   this['@@foldl@@'] = f => init => __value__.reduce((a, v) => f(a)(v), init);
   this['@@filter@@'] = pred => __value__.filter(pred);
-  this['@@chain@@'] = undefined;
-  this['@@ap@@'] = undefined;
+  this['@@chain@@'] = func => __value__.map(x => func(x)).reduce((a, v) => a.concat(v), []);
+  this['@@ap@@'] = b => value(b).map(f => __value__.map(v => f(v))).reduce((a, v) => a.concat(v), []);
   this.toString = () => __value__.toString();
 }
 
@@ -26,7 +26,58 @@ const foldr = f => init => array => {
     throw new TypeError(`Cannot call foldr on type: ${array.constructor.name}. It can only be called on an Array`);
   }
 }
+
+const head = a => {
+  let _a = a;
+  if (typeof a == 'string') {
+    _a = Array.from(a);
+  }
+  return _a[0];
+};
+
+const last = a => {
+  let _a = a;
+  if(typeof a == 'string'){
+    _a = Array.from(a);
+  }
+  return _a[_a.length-1];
+}
+
+const take = n => a =>  {
+  if (typeof a == 'string') {
+    return Array.from(a).slice(0, n).join('');
+  } else {
+    return a.slice(0, n);
+  }
+}
+
+const drop = n => a =>  {
+  if (typeof a == 'string') {
+    return Array.from(a).slice(n).join('');
+  } else {
+    return a.slice(n);
+  }
+}
+
+const uncons = ([head, ...tail]) => {
+  return [head, tail];
+}
+
+const nth = n => a => {
+  return a[n];
+}
+
+const takeLast = n => drop(-n);
+const dropLast = n => take(-n);
+const tail = drop(1);
+const init = dropLast(1);
+
+const length = a => {
+  return a.length;
+}
+
 module.exports = {
-  tryWrapArray,
-  foldr,
+  tryWrapArray, foldr, head, last, tail, init,
+  length, take, drop, takeLast, dropLast, nth,
+  uncons,
 }
