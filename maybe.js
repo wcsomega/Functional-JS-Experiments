@@ -79,16 +79,33 @@ const fromEmpty = f =>  isEmpty(f) ? nothing() : f;
 const fromPure = f => isPure(f) ? some(f.contents) : f;
 
 const maybe = (ifSome) => (ifNothing) => (m) => {
-  if (m['@@isNothing@@']()) {
+  if (isNothing(m)) {
     return ifNothing();
   } else {
     return ifSome(m['@@value@@']());
   }
 };
 
+const fromSome = a => {
+  if (isNothing(a)) {
+    throw new Error('Tried to extract a value from Nothing.');
+  }
+  return value(a);
+}
+
+const fromMaybe = v => a => {
+  if (isNothing(a)) {
+    return v;
+  } else {
+    return value(a);
+  }
+}
+
 module.exports = {
   some,
   nothing,
   maybe,
+  fromSome,
   isSome,
+  isNothing
 };
