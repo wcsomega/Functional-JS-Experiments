@@ -82,7 +82,7 @@ const maybe = (ifSome) => (ifNothing) => (m) => {
   if (isNothing(m)) {
     return ifNothing();
   } else {
-    return ifSome(m['@@value@@']());
+    return ifSome(value(m));
   }
 };
 
@@ -106,6 +106,7 @@ module.exports = {
   nothing,
   maybe,
   fromSome,
+  fromMaybe,
   isSome,
   isNothing
 };
