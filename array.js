@@ -1,12 +1,13 @@
 //methods on wrapped arrays all return unwrapped arrays.
 //so wrapped arrays should only exist within library functions.
+//all functions assume any paramaters that are arrays are actually wrapped arrays
 
 function __Array__ (__value__) {
   this['@@value@@'] = __value__;
   this['@@mappend@@'] = b => __value__.concat(value(b));
   this['@@fmap@@'] = b => __value__.map(b);
-  this['@@fromPure@@'] = a => [a];
-  this['@@fromEmpty@@'] = () => [];
+  this['@@fromPure@@'] = a => new __Array__([a]);
+  this['@@fromEmpty@@'] = () => new __Array__([]);
   this['@@foldr@@'] = f => init => __value__.reduceRight((a, v) => f(v)(a), init);
   this['@@foldl@@'] = f => init => __value__.reduce((a, v) => f(a)(v), init);
   this['@@filter@@'] = pred => __value__.filter(pred);
